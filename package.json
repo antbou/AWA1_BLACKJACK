@@ -11,12 +11,13 @@
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore"
   },
   "dependencies": {
-    "sass": "^1.57.1",
+    "pinia": "^2.0.28",
     "vue": "^3.2.45",
-    "vue-router": "^4.1.6",
-    "vuex": "^4.0.2"
+    "vue-router": "^4.1.6"
   },
   "devDependencies": {
+    "@fontsource/montserrat": "^4.5.11",
+    "@fontsource/roboto": "^4.5.7",
     "@rushstack/eslint-patch": "^1.1.4",
     "@types/node": "^18.11.12",
     "@vitejs/plugin-vue": "^4.0.0",
