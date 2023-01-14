@@ -1,12 +1,17 @@
 <template>
+  <TheNavbar />
   <div id="app">
     <router-view />
   </div>
 </template>
 
-<style lang="scss">
+<script setup lang="ts">
+import TheNavbar from "@/components/layout/TheNavbar.vue";
+</script>
+
+<style>
+/* Default font */
 body {
-  background-color: #163b3c !important;
-  overflow: hidden;
+  font-family: "Roboto";
 }
 </style>
