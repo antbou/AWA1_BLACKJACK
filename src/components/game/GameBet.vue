@@ -1,0 +1,100 @@
+<template>
+  <TheCard>
+    <div class="flex flex-col">
+      <div class="flex flex-col items-center mb-2">
+        <p class="text-4xl md:text-5xl mb-4"></p>
+        <p>Start the game after you set your bet.</p>
+      </div>
+      <div class="grid grid-cols-4 md:gap-4 my-2">
+        <PhPokerChipFill
+          class="md:col-span-1"
+          :class="currentCredits < 10 ? 'fill-gray-600' : 'fill-red-500'"
+          :value="10"
+          @click="setCredits(10)"
+        />
+        <PhPokerChipFill
+          class="md:col-span-1"
+          :class="currentCredits < 25 ? 'fill-gray-600' : 'fill-green-600'"
+          :value="25"
+          @click="setCredits(25)"
+        />
+        <PhPokerChipFill
+          class="md:col-span-1"
+          :class="currentCredits < 50 ? 'fill-gray-600' : 'fill-blue-500'"
+          :value="50"
+          @click="setCredits(50)"
+        />
+        <PhPokerChipFill
+          class="md:col-span-1"
+          :class="currentCredits < 100 ? 'fill-gray-600' : 'fill-black'"
+          :value="100"
+          @click="setCredits(100)"
+        />
+      </div>
+      <DisplayCredits class="my-2" />
+      <div class="grid grid-cols-1 gap-4 mt-2">
+        <TheButton
+          v-if="currentCredits >= 10"
+          class="font-montserrat col-span-1"
+          :disabled="
+            currentlyCreditsSet < 1 || currentCredits < currentlyCreditsSet
+          "
+          @click="startGame"
+          >Play</TheButton
+        >
+        <TheButton
+          v-else
+          class="font-montserrat col-span-1"
+          type="secondary"
+          @click="resetCredits"
+          >Reset Credits</TheButton
+        >
+      </div>
+    </div>
+  </TheCard>
+</template>
+
+<script setup lang="ts">
+import TheCard from "@/components/misc/TheCard.vue";
+import TheButton from "@/components/misc/TheButton.vue";
+import DisplayCredits from "@/components/game/DisplayCredits.vue";
+import PhPokerChipFill from "@/components/icons/PhPokerChipFill.vue";
+import { useGameStore } from "@/store/game";
+import { useCreditStore } from "@/store/credits";
+import { computed } from "vue";
+
+// Using stores
+const gameStore = useGameStore();
+const creditStore = useCreditStore();
+
+// Credits states
+const currentCredits = computed(() => creditStore.getCredits);
+const currentlyCreditsSet = computed(() => gameStore.getPlayersBet);
+
+// Set credits if you have enough
+const setCredits = (creditsToBeSet: number) => {
+  if (currentCredits.value >= creditsToBeSet) {
+    gameStore.setBet(creditsToBeSet);
+  }
+};
+
+// Set credits and start game
+const startGame = () => {
+  const newBet = currentlyCreditsSet.value;
+  // Bet needs to be set more than 0 credits and player need to have at least the smallest bet
+  if (
+    newBet > 0 &&
+    currentCredits.value >= 10 &&
+    currentCredits.value >= newBet
+  ) {
+    creditStore.subtractCredits(newBet);
+    gameStore.setBet(newBet);
+    gameStore.startGame();
+  }
+};
+
+// Reset credits
+const resetCredits = () => {
+  creditStore.resetCredits();
+};
+</script>
