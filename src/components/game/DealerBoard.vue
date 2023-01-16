@@ -28,7 +28,7 @@ import TheCard from "@/components/misc/TheCard.vue";
 import GameCard from "@/components/game/GameCard.vue";
 import DisplayScore from "@/components/game/DisplayScore.vue";
 import { useGameStore } from "@/store/game";
-import { computed, TransitionGroup } from "vue";
+import { computed } from "vue";
 
 // Using game store
 const gameStore = useGameStore();

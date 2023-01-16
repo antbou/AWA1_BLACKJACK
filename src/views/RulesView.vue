@@ -85,12 +85,4 @@
 <script setup lang="ts">
 import TheCard from "@/components/misc/TheCard.vue";
 import TheButton from "@/components/misc/TheButton.vue";
-// import AppCard from '@/components/misc/AppCard.vue'
-// import AppButton from '@/components/misc/AppButton.vue'
-// import { useAppStore } from '~/store/app'
-
-// // Changing title
-// const appStore = useAppStore()
-// const pageTitle = `Rules - ${appStore.getTitle}`
-// useHead({ title: pageTitle })
 </script>

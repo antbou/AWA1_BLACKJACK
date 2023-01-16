@@ -34,9 +34,6 @@ export const useDeckStore = defineStore({
       ];
       const types = ["clubs", "diamonds", "hearts", "spades"];
 
-      const colors = ["clubs", "diamonds", "hearts", "spades"];
-      const heads = ["jack", "queen", "king", "ace"];
-
       //   Create a deck of cards
       types.forEach((type) => {
         values.forEach((value) => {
@@ -48,25 +45,6 @@ export const useDeckStore = defineStore({
           });
         });
       });
-      //   console.log("buildDeck");
-      //   colors.forEach((color) => {
-      //     let start = 2;
-      //     this.deck.push(
-      //       // @ts-ignore
-      //       [...Array(9)]
-      //         .fill(null)
-      //         // eslint-disable-next-line no-plusplus
-      //         .map(() => ({ value: start, image: `${start++}_of_${color}.png` }))
-      //         .concat(
-      //           // @ts-ignore
-      //           heads.map((head) => ({
-      //             value: head === "ace" ? head : 10,
-      //             image: `${head}_of_${color}.png`,
-      //           }))
-      //         )
-      //     );
-      //   });
-      //   console.log(this.deck);
     },
     shuffleDeck() {
       // Shuffle the deck

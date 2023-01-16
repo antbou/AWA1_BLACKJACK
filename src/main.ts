@@ -1,6 +1,6 @@
 import App from "./App.vue";
 import router from "./router";
-import { createApp, watch, h } from "vue";
+import { createApp } from "vue";
 import { createPinia } from "pinia";
 import "./assets/main.css";
 import "@fontsource/montserrat";

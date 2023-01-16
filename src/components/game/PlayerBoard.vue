@@ -45,7 +45,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, TransitionGroup, watch } from "vue";
+import { computed, watch } from "vue";
 import TheCard from "@/components/misc/TheCard.vue";
 import TheButton from "@/components/misc/TheButton.vue";
 import GameCard from "@/components/game/GameCard.vue";

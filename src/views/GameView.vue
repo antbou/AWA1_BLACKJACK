@@ -44,10 +44,6 @@ import DisplayCredits from "@/components/game/DisplayCredits.vue";
 import { useGameStore } from "@/store/game";
 import { computed } from "vue";
 
-// Changing title
-// const pageTitle = `Game `;
-// useHead({ title: pageTitle });
-
 // Using game store
 const gameStore = useGameStore();
 
