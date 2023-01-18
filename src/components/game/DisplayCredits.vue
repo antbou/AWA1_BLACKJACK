@@ -1,9 +1,4 @@
-<template>
-  <div class="flex flex-col items-center">
-    <p>Currently set: {{ currentlyCreditsSet }} credits.</p>
-    <p>You have {{ currentCredits }} credits.</p>
-  </div>
-</template>
+<template>{{ currentlyCreditsSet }} $</template>
 
 <script setup lang="ts">
 import { useCreditStore } from "@/store/credits";
