@@ -1,6 +1,6 @@
 <template>
   <button
-    class="rounded-full sm:w-16 sm:h-16 w-12 h-12 border-4 border-slate-400 sm:text-2xl text-xs mx-px"
+    class="rounded-full token border-4 border-slate-400 sm:text-2xl text-xs mx-px"
     :style="{ backgroundColor: bgColor }"
     :class="textColor"
   >
@@ -31,7 +31,6 @@ const bgColor = computed(() => {
 });
 
 const textColor = computed(() => {
-  console.log(props.variant);
   return props.variant === "light" ? "text-black  " : "text-white";
 });
 </script>

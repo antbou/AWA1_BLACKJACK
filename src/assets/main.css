@@ -1,3 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.token {
+  @apply sm:w-16 sm:h-16 w-12 h-12;
+}

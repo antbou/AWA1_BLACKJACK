@@ -1,7 +1,5 @@
 <template>
-  <!-- <div class="flex items-center"> -->
   <TheCard class="mt-16 sm:mt-32 flex items-center flex-col">
-    <!-- <div class="m-50"> -->
     <div class="flex flex-col items-center mb-2">
       <p>Start the game after you set your bet.</p>
     </div>
@@ -9,14 +7,23 @@
     <div
       class="grid grid-rows-2 sm:grid-rows-1 grid-cols-2 sm:grid-cols-3 gap-x-3 place-items-center mt-3 gap-y-4"
     >
-      <div class="place-self-end">
-        <PhPokerChipFill
-          v-if="currentlyCreditsSet >= 1"
-          :variant="getLastTokenPlayed().variant"
-          :value="getLastTokenPlayed().value"
-          @click="remove()"
-          :disabled="!canRemove()"
-        />
+      <div class="relative place-self-end token" ref="listPlayedChips">
+        <TransitionGroup
+          name="tokenTransition"
+          :duration="2"
+          @enter="tokenEnter"
+          tag="ul"
+        >
+          <PhPokerChipFill
+            v-for="(tokenPlayed, index) in tokensPlayed"
+            :key="index"
+            :variant="tokenPlayed.variant"
+            :value="tokenPlayed.value"
+            @click="remove($event)"
+            :disabled="!canRemove()"
+            class="absolute z-50"
+          />
+        </TransitionGroup>
       </div>
       <div class="w-full sm:text-center text-left">
         {{ currentlyCreditsSet }}
@@ -40,16 +47,21 @@
       <div
         class="grid grid-rows-2 sm:grid-rows-1 grid-cols-3 sm:grid-cols-6 gap-x-2 place-items-center mt-3 gap-y-2"
       >
-        <transition-group mode="out-in" name="token" :duration="500">
-          <template v-for="(token, idx) in tokens" :key="idx">
-            <PhPokerChipFill
-              :variant="token.variant"
-              :value="token.value"
-              @click="add(token)"
-            >
-            </PhPokerChipFill>
-          </template>
-        </transition-group>
+        <span
+          v-for="(token, idx) in tokens"
+          :key="idx"
+          :ref="tokensRefStack.tokensRef"
+          :data-value="token.value"
+          class="token"
+        >
+          <PhPokerChipFill
+            :variant="token.variant"
+            :value="token.value"
+            @click="addCredits(token)"
+            v-show="isTokenVisible(token)"
+          >
+          </PhPokerChipFill>
+        </span>
       </div>
     </div>
   </TheCard>
@@ -58,24 +70,35 @@
 <script setup lang="ts">
 import TheCard from "@/components/misc/TheCard.vue";
 import TheButton from "@/components/misc/TheButton.vue";
-import DisplayCredits from "@/components/game/DisplayCredits.vue";
 import PhPokerChipFill from "@/components/icons/PhPokerChipFill.vue";
 import { useGameStore } from "@/store/game";
 import { useCreditStore } from "@/store/credits";
-import { computed } from "vue";
+import { computed, ref } from "vue";
 import { useTokenStore } from "@/store/token";
 import type { Token } from "@/store/token";
+import anime from "animejs";
 
 // Using stores
 const gameStore = useGameStore();
 const creditStore = useCreditStore();
 const tokenStore = useTokenStore();
 
+const tokens = computed(() => tokenStore.all);
+const tokensPlayed = ref([] as Token[]);
+
+const tokensRef = ref([]);
+
+const tokensRefStack = { tokensRef };
+
+const listPlayedChips = ref(null);
+
+const isRemoving = ref(false);
+
 // Credits states
 const currentCredits = computed(() => creditStore.getCredits);
 const currentlyCreditsSet = computed(() => gameStore.getPlayersBet);
 
-const add = (token: Token) => {
+const addCredits = (token: Token) => {
   if (currentCredits.value >= token.value) {
     const newBet = currentlyCreditsSet.value + token.value;
     gameStore.setBet(newBet);
@@ -84,28 +107,42 @@ const add = (token: Token) => {
   }
 };
 
-// Set credits if you have enough
-// const setCredits = (token: token) => {
-//   if (currentCredits.value >= creditsToBeSet) {
-//     const newBet = currentlyCreditsSet.value + creditsToBeSet;
-//     gameStore.setBet(newBet);
-//     subtractPlayerCredits(creditsToBeSet);
-//     tokensPlayed.value.push(creditsToBeSet);
-//   }
-// };
+// Animation
+const tokenEnter = (el: any) => {
+  // const lastPlayedToken = tokensPlayed.value[tokensPlayed.value.length - 1];
 
-const disabledTokens = computed(() => {
-  return tokens.value.filter((token) => token.value > currentCredits.value);
-});
+  // Get token from tokens list by value
+  const token = tokensRefStack.tokensRef.value.find(
+    (t) =>
+      t.getAttribute("data-value") === getLastTokenPlayed().value.toString()
+  );
+
+  const x =
+    token.getBoundingClientRect().x -
+    listPlayedChips.value.getBoundingClientRect().x;
+  const y =
+    token.getBoundingClientRect().y -
+    listPlayedChips.value.getBoundingClientRect().y;
+
+  anime({
+    targets: el,
+    translateX: x,
+    translateY: y,
+    direction: "reverse",
+    duration: 500,
+    easing: "easeInOutSine",
+  });
+};
+
+const isTokenVisible = (token: Token) => {
+  return currentCredits.value - token.value >= 0;
+};
 
 const subtractPlayerCredits = (creditsToBeSubtracted: number) => {
   if (currentCredits.value >= creditsToBeSubtracted) {
     creditStore.subtractCredits(creditsToBeSubtracted);
   }
 };
-
-const tokens = computed(() => tokenStore.all);
-const tokensPlayed = computed(() => [] as Token[]);
 
 // Set credits and start game
 const startGame = () => {
@@ -131,13 +168,35 @@ const getLastTokenPlayed = (): Token => {
   return tokensPlayed.value[tokensPlayed.value.length - 1];
 };
 
-const remove = () => {
+const remove = async (event: any) => {
   const lastTokenPlayed = getLastTokenPlayed();
-  if (lastTokenPlayed) {
+  if (lastTokenPlayed && !isRemoving.value) {
+    isRemoving.value = true;
     const newBet = currentlyCreditsSet.value - lastTokenPlayed.value;
     gameStore.setBet(newBet);
     creditStore.addCredits(lastTokenPlayed.value);
-    tokensPlayed.value.pop();
+
+    // Avoid cursor pointer when it's last token
+    if (tokensPlayed.value.length === 1) {
+      event.target.style.cursor = "default";
+    }
+
+    // Fade out token
+    anime({
+      targets: event.target,
+      opacity: [1, 0],
+      easing: "easeOutExpo",
+      duration: 250,
+      begin: () => {
+        isRemoving.value = true;
+      },
+      complete: () => {
+        if (canRemove()) {
+          tokensPlayed.value.pop();
+        }
+        isRemoving.value = false;
+      },
+    });
   }
 };
 
