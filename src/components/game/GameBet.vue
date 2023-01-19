@@ -19,19 +19,22 @@
             :key="index"
             :variant="tokenPlayed.variant"
             :value="tokenPlayed.value"
-            @click="remove($event)"
-            :disabled="!canRemove()"
+            @click="removeCredits($event)"
+            :disabled="!canRemoveToken()"
             class="absolute z-50"
           />
         </TransitionGroup>
       </div>
       <div class="w-full sm:text-center text-left">
-        {{ currentlyCreditsSet }}
+        <DisplayCredits
+          :next-credits="creditsBet"
+          :last-credits="lastCreditsBet"
+        />
       </div>
 
       <TheButton
         class="font-montserrat sm:w-full sm:h-16 w-2/4 h-12 col-span-2 sm:col-span-1 rounded-full"
-        :disabled="currentlyCreditsSet <= 0"
+        :disabled="creditsBet <= 0"
         @click="startGame"
         >Play</TheButton
       >
@@ -41,8 +44,11 @@
     <div class="flex flex-col">
       <div class="flex flex-col items-center mb-2">
         <p class="text-4xl md:text-5xl mb-4"></p>
-        <p>Start the game after you set your bet.</p>
-        {{ currentCredits }}
+        <p>Banks</p>
+        <DisplayCredits
+          :next-credits="creditsInBank"
+          :last-credits="lastCreditsInBank"
+        />
       </div>
       <div
         class="grid grid-rows-2 sm:grid-rows-1 grid-cols-3 sm:grid-cols-6 gap-x-2 place-items-center mt-3 gap-y-2"
@@ -73,10 +79,11 @@ import TheButton from "@/components/misc/TheButton.vue";
 import PhPokerChipFill from "@/components/icons/PhPokerChipFill.vue";
 import { useGameStore } from "@/store/game";
 import { useCreditStore } from "@/store/credits";
-import { computed, ref } from "vue";
+import { TransitionGroup, computed, onMounted, ref } from "vue";
 import { useTokenStore } from "@/store/token";
 import type { Token } from "@/store/token";
 import anime from "animejs";
+import DisplayCredits from "@/components/game/DisplayCredits.vue";
 
 // Using stores
 const gameStore = useGameStore();
@@ -95,16 +102,84 @@ const listPlayedChips = ref(null);
 const isRemoving = ref(false);
 
 // Credits states
-const currentCredits = computed(() => creditStore.getCredits);
-const currentlyCreditsSet = computed(() => gameStore.getPlayersBet);
+const lastCreditsInBank = ref(0);
+const lastCreditsBet = ref(0);
+const creditsInBank = computed(() => creditStore.getCredits);
+const creditsBet = computed(() => gameStore.getPlayersBet);
+
+onMounted(() => {
+  const orderedTokens = [...tokens.value].sort((a, b) => b.value - a.value);
+  console.log(orderedTokens);
+
+  let credits = creditsBet.value;
+  // sort tokens by value desc
+  while (credits > 0) {
+    // substract credits from tokens list to know which tokens to show
+    orderedTokens.forEach((token) => {
+      if (credits >= token.value) {
+        credits -= token.value;
+        AddPlayedToken(token);
+      }
+    });
+  }
+});
+
+const AddPlayedToken = (token: Token) => {
+  tokensPlayed.value.push(token);
+};
 
 const addCredits = (token: Token) => {
-  if (currentCredits.value >= token.value) {
-    const newBet = currentlyCreditsSet.value + token.value;
+  console.log("addCredits");
+  if (creditsInBank.value >= token.value) {
+    const newBet = creditsBet.value + token.value;
+    lastCreditsInBank.value = creditsInBank.value;
+    lastCreditsBet.value = creditsBet.value;
     gameStore.setBet(newBet);
     subtractPlayerCredits(token.value);
-    tokensPlayed.value.push(token);
+    AddPlayedToken(token);
   }
+};
+
+const removeCredits = async (event: any) => {
+  if (lastTokenPlayed() && !isRemoving.value) {
+    isRemoving.value = true;
+    const newBet = creditsBet.value - lastTokenPlayed().value;
+    lastCreditsInBank.value = creditsInBank.value;
+    lastCreditsBet.value = creditsBet.value;
+    gameStore.setBet(newBet);
+    creditStore.addCredits(lastTokenPlayed().value);
+
+    // Avoid cursor pointer when it's last token
+    if (tokensPlayed.value.length === 1) {
+      event.target.style.cursor = "default";
+    }
+
+    // Fade out token
+    anime({
+      targets: event.target,
+      opacity: [1, 0],
+      easing: "easeInOutSine",
+      duration: 300,
+      begin: () => {
+        isRemoving.value = true;
+      },
+      complete: () => {
+        if (canRemoveToken()) {
+          tokensPlayed.value.pop();
+        }
+        isRemoving.value = false;
+      },
+      rotate: {
+        value: "+=0.8turn", // 0 + 2 = '2turn'
+        duration: 300,
+        easing: "easeInOutSine",
+      },
+    });
+  }
+};
+
+const canRemoveToken = () => {
+  return tokensPlayed.value.length > 0;
 };
 
 // Animation
@@ -113,8 +188,7 @@ const tokenEnter = (el: any) => {
 
   // Get token from tokens list by value
   const token = tokensRefStack.tokensRef.value.find(
-    (t) =>
-      t.getAttribute("data-value") === getLastTokenPlayed().value.toString()
+    (t) => t.getAttribute("data-value") === lastTokenPlayed().value.toString()
   );
 
   const x =
@@ -135,24 +209,20 @@ const tokenEnter = (el: any) => {
 };
 
 const isTokenVisible = (token: Token) => {
-  return currentCredits.value - token.value >= 0;
+  return creditsInBank.value - token.value >= 0;
 };
 
 const subtractPlayerCredits = (creditsToBeSubtracted: number) => {
-  if (currentCredits.value >= creditsToBeSubtracted) {
+  if (creditsInBank.value >= creditsToBeSubtracted) {
     creditStore.subtractCredits(creditsToBeSubtracted);
   }
 };
 
 // Set credits and start game
 const startGame = () => {
-  const newBet = currentlyCreditsSet.value;
+  const newBet = creditsBet.value;
   // Bet needs to be set more than 0 credits and player need to have at least the smallest bet
-  if (
-    newBet > 0 &&
-    currentCredits.value >= 10 &&
-    currentCredits.value >= newBet
-  ) {
+  if (newBet > 0 && creditsInBank.value >= 1 && creditsInBank.value >= newBet) {
     creditStore.subtractCredits(newBet);
     gameStore.setBet(newBet);
     gameStore.startGame();
@@ -164,43 +234,7 @@ const resetCredits = () => {
   creditStore.resetCredits();
 };
 
-const getLastTokenPlayed = (): Token => {
+const lastTokenPlayed = (): Token => {
   return tokensPlayed.value[tokensPlayed.value.length - 1];
-};
-
-const remove = async (event: any) => {
-  const lastTokenPlayed = getLastTokenPlayed();
-  if (lastTokenPlayed && !isRemoving.value) {
-    isRemoving.value = true;
-    const newBet = currentlyCreditsSet.value - lastTokenPlayed.value;
-    gameStore.setBet(newBet);
-    creditStore.addCredits(lastTokenPlayed.value);
-
-    // Avoid cursor pointer when it's last token
-    if (tokensPlayed.value.length === 1) {
-      event.target.style.cursor = "default";
-    }
-
-    // Fade out token
-    anime({
-      targets: event.target,
-      opacity: [1, 0],
-      easing: "easeOutExpo",
-      duration: 250,
-      begin: () => {
-        isRemoving.value = true;
-      },
-      complete: () => {
-        if (canRemove()) {
-          tokensPlayed.value.pop();
-        }
-        isRemoving.value = false;
-      },
-    });
-  }
-};
-
-const canRemove = () => {
-  return tokensPlayed.value.length > 0;
 };
 </script>

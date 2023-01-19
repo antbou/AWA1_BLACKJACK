@@ -1,15 +1,40 @@
-<template>{{ currentlyCreditsSet }} $</template>
+<template><span ref="creditRef"> </span></template>
 
 <script setup lang="ts">
-import { useCreditStore } from "@/store/credits";
-import { useGameStore } from "@/store/game";
-import { computed } from "vue";
+import { onMounted, onUpdated, ref } from "vue";
+import anime from "animejs";
 
-// Using stores
-const creditStore = useCreditStore();
-const gameStore = useGameStore();
+const creditRef = ref(null as any);
 
-// Credits states
-const currentCredits = computed(() => creditStore.getCredits);
-const currentlyCreditsSet = computed(() => gameStore.getPlayersBet);
+const props = defineProps({
+  lastCredits: {
+    type: Number,
+    default: 0,
+  },
+  nextCredits: {
+    type: Number,
+    default: 0,
+  },
+  symbol: {
+    type: String,
+    default: "$",
+  },
+});
+
+onUpdated(() => {
+  AnimateMonney();
+});
+onMounted(() => {
+  AnimateMonney();
+});
+
+const AnimateMonney = () => {
+  anime({
+    targets: creditRef.value,
+    innerHTML: [props.lastCredits, props.nextCredits + " " + props.symbol],
+    round: 1,
+    easing: "linear",
+    duration: 400,
+  });
+};
 </script>
