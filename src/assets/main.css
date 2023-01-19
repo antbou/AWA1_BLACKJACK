@@ -5,3 +5,15 @@
 .token {
   @apply sm:w-16 sm:h-16 w-12 h-12;
 }
+
+.board-bg {
+  background-image: url("../assets/background.webp");
+  background-size: cover;
+  filter: blur(4px);
+  -webkit-filter: blur(4px);
+}
+
+body,
+html {
+  height: 100%;
+}

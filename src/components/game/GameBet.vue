@@ -37,7 +37,7 @@
       >
     </div>
   </TheCard>
-  <TheCard class="absolute sm:bottom-5 sm:left-5 bottom-2 left-2">
+  <TheCard class="mt-5">
     <div class="flex flex-col">
       <div class="flex flex-col items-center mb-2">
         <p class="text-4xl md:text-5xl mb-4"></p>

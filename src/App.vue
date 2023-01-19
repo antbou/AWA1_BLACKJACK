@@ -1,8 +1,6 @@
-<template>
+<template class="h-screen">
   <TheNavbar />
-  <div id="app">
-    <router-view />
-  </div>
+  <router-view />
 </template>
 
 <script setup lang="ts">
