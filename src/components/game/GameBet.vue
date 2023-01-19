@@ -76,7 +76,7 @@
 <script setup lang="ts">
 import TheCard from "@/components/misc/TheCard.vue";
 import TheButton from "@/components/misc/TheButton.vue";
-import PhPokerChipFill from "@/components/icons/PhPokerChipFill.vue";
+import PhPokerChipFill from "@/components/game/PokerToken.vue";
 import { useGameStore } from "@/store/game";
 import { useCreditStore } from "@/store/credits";
 import { TransitionGroup, computed, onMounted, ref } from "vue";
@@ -109,7 +109,6 @@ const creditsBet = computed(() => gameStore.getPlayersBet);
 
 onMounted(() => {
   const orderedTokens = [...tokens.value].sort((a, b) => b.value - a.value);
-  console.log(orderedTokens);
 
   let credits = creditsBet.value;
   // sort tokens by value desc
@@ -129,7 +128,6 @@ const AddPlayedToken = (token: Token) => {
 };
 
 const addCredits = (token: Token) => {
-  console.log("addCredits");
   if (creditsInBank.value >= token.value) {
     const newBet = creditsBet.value + token.value;
     lastCreditsInBank.value = creditsInBank.value;
