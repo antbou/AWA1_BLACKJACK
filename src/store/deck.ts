@@ -73,7 +73,7 @@ export const useDeckStore = defineStore({
       // Jack, Queen, and King are returned as 10
       return (card: Card) => {
         if (typeof card.value === "string") {
-          if (card.value === "A") {
+          if (card.value === "ace") {
             return 11;
           }
           return 10;
@@ -84,7 +84,7 @@ export const useDeckStore = defineStore({
     checkAce: () => {
       // Checks if the card is an ace and returns true/false
       return (card: Card) => {
-        return card.value === "A";
+        return card.value === "ace";
       };
     },
   },
