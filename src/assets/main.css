@@ -9,8 +9,7 @@
 .board-bg {
   background-image: url("../assets/background.webp");
   background-size: cover;
-  filter: blur(4px);
-  -webkit-filter: blur(4px);
+  @apply blur;
 }
 
 body,

@@ -1,5 +1,5 @@
 <template>
-  <AppModal v-model="showModal">
+  <TheModal v-model="showModal">
     <template #header>{{ gameResults.title }}</template>
     <template #content>
       <div class="flex flex-col">
@@ -14,12 +14,12 @@
         >Next Game</TheButton
       >
     </template>
-  </AppModal>
+  </TheModal>
 </template>
 
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
-import AppModal from "@/components/misc/TheModal.vue";
+import TheModal from "@/components/misc/TheModal.vue";
 import TheButton from "@/components/misc/TheButton.vue";
 import { useGameStore } from "@/store/game";
 import { useCreditStore } from "@/store/credits";

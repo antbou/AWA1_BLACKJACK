@@ -11,6 +11,7 @@
         name="cards"
         tag="div"
         class="flex flex-row mx-auto"
+        @enter="enter"
       >
         <GameCard
           v-for="(card, index) in playerCards"
@@ -51,6 +52,7 @@ import TheButton from "@/components/misc/TheButton.vue";
 import GameCard from "@/components/game/GameCard.vue";
 import DisplayScore from "@/components/game/DisplayScore.vue";
 import { useGameStore } from "@/store/game";
+import anime from "animejs";
 
 // Using game store
 const gameStore = useGameStore();
@@ -72,6 +74,18 @@ watch(playerCanHit, (newValue) => {
   }
 });
 
+const enter = (el: any, done: any) => {
+  anime({
+    targets: el,
+    opacity: [0, 1],
+    duration: 500,
+    delay: 100,
+    easing: "easeInOutQuart",
+    scale: [2, 1],
+    complete: done,
+  });
+};
+
 // Starting new game
 const nextGame = () => {
   gameStore.newGame();
@@ -79,17 +93,6 @@ const nextGame = () => {
 </script>
 
 <style>
-.cards-enter-active,
-.cards-leave-active {
-  transition: all 0.5s ease;
-}
-
-.cards-enter-from,
-.cards-leave-to {
-  opacity: 50;
-  transform: translateX(30px);
-}
-
 /* ensure leaving items are taken out of layout flow so that moving
    animations can be calculated correctly. */
 .cards-leave-active {

@@ -22,7 +22,7 @@
 
         <!-- Credits -->
         <TheCard class="mb-2 md:mb-4 py-2 md:py-4">
-          <DisplayCredits />
+          <DisplayCredits :next-credits="credisBet" />
         </TheCard>
 
         <!-- Dealer -->
@@ -52,6 +52,8 @@ const gameStore = useGameStore();
 const gameRunning = computed(() => gameStore.getGameRunning);
 const showResult = computed(() => gameStore.getShowResults); // Show results
 const gameResults = computed(() => gameStore.getGameResults); // Result of game
+
+const credisBet = computed(() => gameStore.getPlayersBet);
 
 // Starting new game
 const nextGame = () => {
