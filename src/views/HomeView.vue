@@ -1,6 +1,7 @@
 <template>
-  <div class="flex flex-col text-gray-900 dark:text-white">
-    <section class="flex justify-center p-4 md:p-8">
+  <div class="flex flex-col text-gray-900 dark:text-white relative">
+    <div class="board-bg w-full"></div>
+    <section class="flex justify-center p-4 md:p-8 absolute w-full mt-24">
       <TheCard class="max-w-lg">
         <div class="flex flex-col">
           <div class="flex flex-col items-center mb-2">

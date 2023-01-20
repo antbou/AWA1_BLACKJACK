@@ -1,6 +1,6 @@
 <template>
   <div class="flex flex-col text-gray-900 dark:text-white relative">
-    <div class="board-bg w-full" style="min-height: 86vh"></div>
+    <div class="board-bg w-full"></div>
     <section id="game" class="flex flex-col p-4 md:p-8 absolute h-5/6 w-full">
       <!-- Modal - for game result -->
       <GameResult @next-game="nextGame" />
