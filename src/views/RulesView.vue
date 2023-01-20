@@ -1,6 +1,10 @@
 <template>
-  <div class="flex flex-col text-gray-900 dark:text-white">
-    <section id="rules" class="flex justify-center p-4 md:p-8">
+  <div class="flex flex-col text-gray-900 dark:text-white relative">
+    <div class="board-bg w-full"></div>
+    <section
+      id="rules"
+      class="flex justify-center p-4 md:p-8 absolute w-full mt-32"
+    >
       <TheCard class="max-w-2xl">
         <div class="flex flex-col items-center mb-2">
           <p class="text-3xl md:text-5xl mb-4">♠️♥️ Game rules ♦️♣️</p>
