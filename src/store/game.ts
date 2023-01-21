@@ -78,24 +78,26 @@ export const useGameStore = defineStore({
       this.player.stay = true;
       this.showResults();
     },
-    showResults() {
-      // Dealer's turn
-      // Dealing cards until he have more than 17
-      const deckStore = useDeckStore();
-      while (this.getDealerRealSum < 17) {
-        this.dealer.cards.push(deckStore.flipCard(deckStore.takeCard())); // Add card to dealer's hand
-      }
-
-      // Flip every hidden card from dealer
-      this.dealer.cards.forEach((card) => {
-        if (card.hidden) {
-          deckStore.flipCard(card);
+    async showResults() {
+      setTimeout(() => {
+        // Dealer's turn
+        // Dealing cards until he have more than 17
+        const deckStore = useDeckStore();
+        while (this.getDealerRealSum < 17) {
+          this.dealer.cards.push(deckStore.flipCard(deckStore.takeCard())); // Add card to dealer's hand
         }
-      });
 
-      // Showing results and therefore ending the game
-      // Game running state stays true until the user clicks on the new game button
-      this.results = true;
+        // Flip every hidden card from dealer
+        this.dealer.cards.forEach((card) => {
+          if (card.hidden) {
+            deckStore.flipCard(card);
+          }
+        });
+
+        // Showing results and therefore ending the game
+        // Game running state stays true until the user clicks on the new game button
+        this.results = true;
+      }, 500);
     },
   },
   getters: {

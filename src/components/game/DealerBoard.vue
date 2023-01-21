@@ -41,7 +41,6 @@ const dealerCards = computed(() => gameStore.getDealerCards);
 const dealerSum = computed(() => gameStore.getDealerSum);
 
 const enter = (el: any, done: any) => {
-  console.log("entering");
   anime({
     targets: el,
     opacity: [0, 1],

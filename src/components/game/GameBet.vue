@@ -108,21 +108,20 @@ const creditsBet = computed(() => gameStore.getPlayersBet);
 
 onMounted(() => {
   const orderedTokens = [...tokens.value].sort((a, b) => b.value - a.value);
-
   let credits = creditsBet.value;
   // sort tokens by value desc
-  while (credits > 0) {
+  while (credits > 0 && creditsInBank.value > credits) {
     // substract credits from tokens list to know which tokens to show
     orderedTokens.forEach((token) => {
       if (credits >= token.value) {
         credits -= token.value;
-        AddPlayedToken(token);
+        addPlayedToken(token);
       }
     });
   }
 });
 
-const AddPlayedToken = (token: Token) => {
+const addPlayedToken = (token: Token) => {
   tokensPlayed.value.push(token);
 };
 
@@ -133,7 +132,7 @@ const addCredits = (token: Token) => {
     lastCreditsBet.value = creditsBet.value;
     gameStore.setBet(newBet);
     subtractPlayerCredits(token.value);
-    AddPlayedToken(token);
+    addPlayedToken(token);
   }
 };
 
@@ -179,6 +178,33 @@ const canRemoveToken = () => {
   return tokensPlayed.value.length > 0;
 };
 
+const subtractPlayerCredits = (creditsToBeSubtracted: number) => {
+  if (creditsInBank.value >= creditsToBeSubtracted) {
+    creditStore.subtractCredits(creditsToBeSubtracted);
+  }
+};
+
+// Set credits and start game
+const startGame = () => {
+  const newBet = creditsBet.value;
+
+  // Bet needs to be set more than 0 credits and player need to have at least the smallest bet
+  if (creditsInBank.value >= 0 && newBet >= 1) {
+    subtractPlayerCredits(newBet);
+    gameStore.setBet(newBet);
+    gameStore.startGame();
+  }
+};
+
+// Reset credits
+const resetCredits = () => {
+  creditStore.resetCredits();
+};
+
+const lastTokenPlayed = (): Token => {
+  return tokensPlayed.value[tokensPlayed.value.length - 1];
+};
+
 // Animation
 const tokenEnter = (el: any) => {
   const token = tokensRefStack.tokensRef.value.find(
@@ -219,31 +245,5 @@ const tokenDeckEnter = (el: any) => {
 
 const isTokenVisible = (token: Token) => {
   return creditsInBank.value - token.value >= 0;
-};
-
-const subtractPlayerCredits = (creditsToBeSubtracted: number) => {
-  if (creditsInBank.value >= creditsToBeSubtracted) {
-    creditStore.subtractCredits(creditsToBeSubtracted);
-  }
-};
-
-// Set credits and start game
-const startGame = () => {
-  const newBet = creditsBet.value;
-  // Bet needs to be set more than 0 credits and player need to have at least the smallest bet
-  if (newBet > 0 && creditsInBank.value >= 1 && creditsInBank.value >= newBet) {
-    creditStore.subtractCredits(newBet);
-    gameStore.setBet(newBet);
-    gameStore.startGame();
-  }
-};
-
-// Reset credits
-const resetCredits = () => {
-  creditStore.resetCredits();
-};
-
-const lastTokenPlayed = (): Token => {
-  return tokensPlayed.value[tokensPlayed.value.length - 1];
 };
 </script>

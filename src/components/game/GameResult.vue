@@ -37,9 +37,13 @@ const gameResults = computed(() => gameStore.getGameResults); // Result of game
 
 // Watcher for game result and pays out the profit
 watch(showResult, (newValue) => {
+  // Show modal after 2 seconds
   if (newValue) {
+    setTimeout(() => {
+      showModal.value = true;
+    }, 1000);
+
     // After game is over, show modal
-    showModal.value = true;
 
     // Pay out profit
     if (gameResults.value.win === "blackjack") {
@@ -57,6 +61,9 @@ watch(showResult, (newValue) => {
     } else if (gameResults.value.win === false) {
       const lostCredits = playersBet.value;
       profitMessage.value = `You lose your bet: ${lostCredits} credits!`;
+      if (creditStore.getCredits - gameStore.getPlayersBet < 0) {
+        gameStore.setBet(0);
+      }
     }
   }
 });
