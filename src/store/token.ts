@@ -34,7 +34,18 @@ export const useTokenStore = defineStore({
       purple: "#75498F",
       gold: "#E6AE03",
     },
+    tokensPlayed: [] as Token[],
   }),
+  actions: {
+    addTokenPlayed(token: Token) {
+      this.tokensPlayed.push(token);
+    },
+    removeTokenPlayed(token: Token) {
+      this.tokensPlayed = this.tokensPlayed.filter(
+        (t) => t.value !== token.value
+      );
+    },
+  },
   getters: {
     all(state) {
       return state.tokens;
@@ -42,5 +53,8 @@ export const useTokenStore = defineStore({
     token: (state) => (value: number) =>
       state.tokens.filter((t) => t.value === value).pop(),
     tokenColor: (state) => (variant: ColorVariants) => state.colors[variant],
+    allTokensPlayed(state) {
+      return state.tokensPlayed;
+    },
   },
 });

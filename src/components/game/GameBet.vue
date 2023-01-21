@@ -7,8 +7,14 @@
     <div
       class="grid grid-rows-2 sm:grid-rows-1 grid-cols-2 sm:grid-cols-3 gap-x-3 place-items-center mt-3 gap-y-4"
     >
-      <div class="relative place-self-end token" ref="listPlayedChips">
-        <TransitionGroup name="tokenTransition" @enter="tokenEnter" tag="div">
+      <div class="relative place-self-end token" ref="listTokensPlayed">
+        <TransitionGroup
+          name="tokenTransition"
+          @enter="tokenEnter"
+          appear
+          @appear="tokenEnter"
+          tag="div"
+        >
           <PhPokerChipFill
             v-for="(tokenPlayed, index) in tokensPlayed"
             :key="index"
@@ -90,13 +96,12 @@ const creditStore = useCreditStore();
 const tokenStore = useTokenStore();
 
 const tokens = ref(tokenStore.all);
-const tokensPlayed = ref([] as Token[]);
+const tokensPlayed = computed(() => tokenStore.allTokensPlayed);
 
 const tokensRef = ref([] as any);
-
 const tokensRefStack = { tokensRef };
 
-const listPlayedChips = ref(null as any);
+const listTokensPlayed = ref(null as any);
 
 const isRemoving = ref(false);
 
@@ -106,25 +111,6 @@ const lastCreditsBet = ref(0);
 const creditsInBank = computed(() => creditStore.getCredits);
 const creditsBet = computed(() => gameStore.getPlayersBet);
 
-onMounted(() => {
-  const orderedTokens = [...tokens.value].sort((a, b) => b.value - a.value);
-  let credits = creditsBet.value;
-  // sort tokens by value desc
-  while (credits > 0 && creditsInBank.value > credits) {
-    // substract credits from tokens list to know which tokens to show
-    orderedTokens.forEach((token) => {
-      if (credits >= token.value) {
-        credits -= token.value;
-        addPlayedToken(token);
-      }
-    });
-  }
-});
-
-const addPlayedToken = (token: Token) => {
-  tokensPlayed.value.push(token);
-};
-
 const addCredits = (token: Token) => {
   if (creditsInBank.value >= token.value) {
     const newBet = creditsBet.value + token.value;
@@ -132,7 +118,7 @@ const addCredits = (token: Token) => {
     lastCreditsBet.value = creditsBet.value;
     gameStore.setBet(newBet);
     subtractPlayerCredits(token.value);
-    addPlayedToken(token);
+    tokenStore.addTokenPlayed(token);
   }
 };
 
@@ -196,11 +182,6 @@ const startGame = () => {
   }
 };
 
-// Reset credits
-const resetCredits = () => {
-  creditStore.resetCredits();
-};
-
 const lastTokenPlayed = (): Token => {
   return tokensPlayed.value[tokensPlayed.value.length - 1];
 };
@@ -214,10 +195,10 @@ const tokenEnter = (el: any) => {
 
   const x =
     token.getBoundingClientRect().x -
-    listPlayedChips.value.getBoundingClientRect().x;
+    listTokensPlayed.value.getBoundingClientRect().x;
   const y =
     token.getBoundingClientRect().y -
-    listPlayedChips.value.getBoundingClientRect().y;
+    listTokensPlayed.value.getBoundingClientRect().y;
 
   anime({
     targets: el,
@@ -232,7 +213,7 @@ const tokenEnter = (el: any) => {
 const tokenDeckEnter = (el: any) => {
   const x = window.innerWidth - el.getBoundingClientRect().x - 100;
   anime({
-    targets: el,
+    targets: el.firstChild,
     translateX: [x, 0],
     opacity: {
       value: [0, 1],
