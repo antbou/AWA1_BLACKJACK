@@ -8,12 +8,7 @@
       class="grid grid-rows-2 sm:grid-rows-1 grid-cols-2 sm:grid-cols-3 gap-x-3 place-items-center mt-3 gap-y-4"
     >
       <div class="relative place-self-end token" ref="listPlayedChips">
-        <TransitionGroup
-          name="tokenTransition"
-          :duration="2"
-          @enter="tokenEnter"
-          tag="ul"
-        >
+        <TransitionGroup name="tokenTransition" @enter="tokenEnter" tag="div">
           <PhPokerChipFill
             v-for="(tokenPlayed, index) in tokensPlayed"
             :key="index"
@@ -53,21 +48,25 @@
       <div
         class="grid grid-rows-2 sm:grid-rows-1 grid-cols-3 sm:grid-cols-6 gap-x-2 place-items-center mt-3 gap-y-2"
       >
-        <span
-          v-for="(token, idx) in tokens"
-          :key="idx"
-          :ref="tokensRefStack.tokensRef"
-          :data-value="token.value"
-          class="token"
-        >
-          <PhPokerChipFill
-            :variant="token.variant"
-            :value="token.value"
-            @click="addCredits(token)"
-            v-show="isTokenVisible(token)"
+        <TransitionGroup name="tokenDeckEnter" appear @appear="tokenDeckEnter">
+          <div
+            v-for="(token, idx) in tokens"
+            :key="idx"
+            :ref="tokensRefStack.tokensRef"
+            :data-value="token.value"
+            :data-index="idx"
+            class="token"
           >
-          </PhPokerChipFill>
-        </span>
+            <PhPokerChipFill
+              :key="token.value"
+              :variant="token.variant"
+              :value="token.value"
+              @click="addCredits(token)"
+              v-show="isTokenVisible(token)"
+            >
+            </PhPokerChipFill>
+          </div>
+        </TransitionGroup>
       </div>
     </div>
   </TheCard>
@@ -90,14 +89,14 @@ const gameStore = useGameStore();
 const creditStore = useCreditStore();
 const tokenStore = useTokenStore();
 
-const tokens = computed(() => tokenStore.all);
+const tokens = ref(tokenStore.all);
 const tokensPlayed = ref([] as Token[]);
 
-const tokensRef = ref([]);
+const tokensRef = ref([] as any);
 
 const tokensRefStack = { tokensRef };
 
-const listPlayedChips = ref(null);
+const listPlayedChips = ref(null as any);
 
 const isRemoving = ref(false);
 
@@ -168,7 +167,7 @@ const removeCredits = async (event: any) => {
         isRemoving.value = false;
       },
       rotate: {
-        value: "+=0.8turn", // 0 + 2 = '2turn'
+        value: "+=0.8turn",
         duration: 300,
         easing: "easeInOutSine",
       },
@@ -182,11 +181,9 @@ const canRemoveToken = () => {
 
 // Animation
 const tokenEnter = (el: any) => {
-  // const lastPlayedToken = tokensPlayed.value[tokensPlayed.value.length - 1];
-
-  // Get token from tokens list by value
   const token = tokensRefStack.tokensRef.value.find(
-    (t) => t.getAttribute("data-value") === lastTokenPlayed().value.toString()
+    (t: HTMLElement) =>
+      t.getAttribute("data-value") === lastTokenPlayed().value.toString()
   );
 
   const x =
@@ -203,6 +200,20 @@ const tokenEnter = (el: any) => {
     direction: "reverse",
     duration: 500,
     easing: "easeInOutSine",
+  });
+};
+
+const tokenDeckEnter = (el: any) => {
+  const x = window.innerWidth - el.getBoundingClientRect().x - 100;
+  anime({
+    targets: el,
+    translateX: [x, 0],
+    opacity: {
+      value: [0, 1],
+      duration: 2000,
+      easing: "easeInOutSine",
+    },
+    duration: 1000,
   });
 };
 
