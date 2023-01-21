@@ -8,11 +8,10 @@
         class="container px-6 py-8 mx-auto md:flex md:justify-between md:items-center"
       >
         <div class="flex items-center justify-between">
-          <router-link
-            to="/"
-            class="text-xl font-bold text-gray-100 md:text-2xl hover:text-indigo-400"
-            >Logo
+          <router-link :to="{ name: 'home' }">
+            <img src="@/assets/logo.png" alt="logo" class="w-10 h-10" />
           </router-link>
+
           <!-- Mobile menu button -->
           <div @click="toggleNav" class="flex md:hidden">
             <button
@@ -34,10 +33,13 @@
           :class="showMenu ? 'flex' : 'hidden'"
           class="flex-col mt-8 space-y-4 md:flex md:space-y-0 md:flex-row md:items-center md:space-x-10 md:mt-0 w-fit"
         >
-          <li class="text-gray-100 hover:text-indigo-400">Home</li>
-          <li class="text-gray-100 hover:text-indigo-400">About</li>
-          <li class="text-gray-100 hover:text-indigo-400">Blogs</li>
-          <li class="text-gray-100 hover:text-indigo-400">Contact Us</li>
+          <li class="text-gray-100 hover:text-indigo-400">
+            <router-link :to="{ name: 'rules' }"> Rules </router-link>
+          </li>
+          <li class="text-gray-100 hover:text-indigo-400">
+            <router-link :to="{ name: 'login' }"> Login </router-link>
+          </li>
+          <li class="text-gray-100 hover:text-indigo-400">My account</li>
         </ul>
       </nav>
     </div>
