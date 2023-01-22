@@ -8,7 +8,7 @@
               <p class="text-4xl md:text-5xl mb-4">Blackjack</p>
             </div>
             <div class="flex flex-col mb-4">
-              <p>Vue-Jack is a small blackjack clone.</p>
+              <p>Blackjack is a small blackjack clone.</p>
               <p>
                 You can find the rules of the game by clicking the button below.
               </p>
