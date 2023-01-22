@@ -33,7 +33,7 @@
       </div>
 
       <TheButton
-        class="font-montserrat sm:w-full sm:h-16 w-2/4 h-12 col-span-2 sm:col-span-1 rounded-full"
+        class="font-montserrat sm:w-full sm:h-16 w-2/4 h-12 col-span-2 sm:col-span-1"
         :disabled="creditsBet <= 0"
         @click="startGame"
         >Play</TheButton
