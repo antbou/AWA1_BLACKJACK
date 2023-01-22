@@ -9,7 +9,7 @@
       >
         <div class="flex items-center justify-between">
           <router-link :to="{ name: 'home' }">
-            <img src="src/assets/logo.png" alt="logo" class="w-10 h-10" />
+            <img src="/src/assets/logo.png" alt="logo" class="w-10 h-10" />
           </router-link>
 
           <!-- Mobile menu button -->

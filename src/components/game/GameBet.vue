@@ -83,11 +83,11 @@ import TheButton from "@/components/misc/TheButton.vue";
 import PhPokerChipFill from "@/components/game/PokerToken.vue";
 import { useGameStore } from "@/store/game";
 import { useCreditStore } from "@/store/credits";
-import { TransitionGroup, computed, onMounted, ref } from "vue";
+import { TransitionGroup, computed, ref } from "vue";
 import { useTokenStore } from "@/store/token";
 import type { Token } from "@/store/token";
-import anime from "animejs";
 import DisplayCredits from "@/components/game/DisplayCredits.vue";
+import anime from "animejs";
 
 // Using stores
 const gameStore = useGameStore();
