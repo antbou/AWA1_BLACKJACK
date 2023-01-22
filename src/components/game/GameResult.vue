@@ -23,10 +23,12 @@ import TheModal from "@/components/misc/TheModal.vue";
 import TheButton from "@/components/misc/TheButton.vue";
 import { useGameStore } from "@/store/game";
 import { useCreditStore } from "@/store/credits";
+import { useTokenStore } from "@/store/token";
 
 // Using stores
 const gameStore = useGameStore();
 const creditStore = useCreditStore();
+const tokenStore = useTokenStore();
 
 // Game result data
 const showModal = ref(false); // Modal state
@@ -63,6 +65,7 @@ watch(showResult, (newValue) => {
       profitMessage.value = `You lose your bet: ${lostCredits} credits!`;
       if (creditStore.getCredits - gameStore.getPlayersBet < 0) {
         gameStore.setBet(0);
+        tokenStore.resetTokensPlayed();
       }
     }
   }

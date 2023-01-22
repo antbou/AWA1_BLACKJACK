@@ -1,7 +1,7 @@
 <template>
   <div class="bg-black/10 dark:bg-black/50 relative">
     <div
-      class="absolute z-20 w-full"
+      class="absolute z-50 w-full"
       style="background: linear-gradient(#006400, #003554)"
     >
       <nav
@@ -9,7 +9,7 @@
       >
         <div class="flex items-center justify-between">
           <router-link :to="{ name: 'home' }">
-            <img src="@/assets/logo.png" alt="logo" class="w-10 h-10" />
+            <img src="src/assets/logo.png" alt="logo" class="w-10 h-10" />
           </router-link>
 
           <!-- Mobile menu button -->
@@ -34,10 +34,14 @@
           class="flex-col mt-8 space-y-4 md:flex md:space-y-0 md:flex-row md:items-center md:space-x-10 md:mt-0 w-fit"
         >
           <li class="text-gray-100 hover:text-indigo-400">
-            <router-link :to="{ name: 'rules' }"> Rules </router-link>
+            <router-link @click="toggleNav" :to="{ name: 'rules' }">
+              Rules
+            </router-link>
           </li>
           <li class="text-gray-100 hover:text-indigo-400">
-            <router-link :to="{ name: 'login' }"> Login </router-link>
+            <router-link @click="toggleNav" :to="{ name: 'login' }">
+              Login
+            </router-link>
           </li>
           <li class="text-gray-100 hover:text-indigo-400">My account</li>
         </ul>

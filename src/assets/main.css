@@ -7,13 +7,22 @@
 }
 
 .board-bg {
-  background-image: url("../assets/background.webp");
+  background-image: url("../assets/background-blur.webp");
   background-size: cover;
-  height: 100vh;
-  @apply blur h-screen;
+  background-repeat: no-repeat;
+  background-attachment: scroll;
 }
 
-body,
-html {
-  height: 100%;
+.board-section {
+  @apply flex justify-center p-4 md:p-8 mt-32;
 }
+
+.board {
+  @apply flex flex-col text-gray-900 dark:text-white;
+}
+
+/* body,
+html,
+#app {
+  @apply h-full;
+} */

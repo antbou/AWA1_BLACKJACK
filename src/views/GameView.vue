@@ -1,37 +1,38 @@
 <template>
-  <div class="flex flex-col text-gray-900 dark:text-white relative">
-    <div class="board-bg w-full"></div>
-    <section id="game" class="flex flex-col p-4 md:p-8 absolute h-5/6 w-full">
-      <!-- Modal - for game result -->
-      <GameResult @next-game="nextGame" />
+  <div class="board">
+    <div class="board-bg">
+      <section id="game" class="board-section">
+        <!-- Modal - for game result -->
+        <GameResult @next-game="nextGame" />
 
-      <!-- Betting window -->
-      <div v-if="!gameRunning" class="mx-auto">
-        <GameBet />
-      </div>
-
-      <!-- Game running -->
-      <div v-else class="mx-auto">
-        <!-- Result title -->
-        <div
-          v-if="showResult"
-          class="grid justify-items-center text-4xl mb-2 md:mb-4"
-        >
-          <p>{{ gameResults.title }}</p>
+        <!-- Betting window -->
+        <div v-if="!gameRunning" class="mx-auto">
+          <GameBet />
         </div>
 
-        <!-- Credits -->
-        <TheCard class="mb-2 md:mb-4 py-2 md:py-4">
-          <DisplayCredits :next-credits="credisBet" />
-        </TheCard>
+        <!-- Game running -->
+        <div v-else class="mx-auto">
+          <!-- Result title -->
+          <div
+            v-if="showResult"
+            class="grid justify-items-center text-4xl mb-2 md:mb-4"
+          >
+            <p>{{ gameResults.title }}</p>
+          </div>
 
-        <!-- Dealer -->
-        <DealerBoard class="my-2 md:my-4" />
+          <!-- Credits -->
+          <TheCard class="mb-2 md:mb-4 py-2 md:py-4">
+            <DisplayCredits :next-credits="credisBet" />
+          </TheCard>
 
-        <!-- Player -->
-        <PlayerBoard class="mt-2 md:mt-4" />
-      </div>
-    </section>
+          <!-- Dealer -->
+          <DealerBoard class="my-2 md:my-4" />
+
+          <!-- Player -->
+          <PlayerBoard class="mt-2 md:mt-4" />
+        </div>
+      </section>
+    </div>
   </div>
 </template>
 
@@ -60,3 +61,11 @@ const nextGame = () => {
   gameStore.newGame();
 };
 </script>
+
+<style>
+@media screen and (min-width: 50px) and (min-height: 647px) {
+  .board {
+    @apply h-full !important;
+  }
+}
+</style>

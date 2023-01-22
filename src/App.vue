@@ -1,4 +1,4 @@
-<template class="h-screen">
+<template>
   <TheNavbar />
   <router-view />
 </template>
