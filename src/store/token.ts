@@ -45,6 +45,9 @@ export const useTokenStore = defineStore({
         (t) => t.value !== token.value
       );
     },
+    resetTokensPlayed() {
+      this.tokensPlayed = [];
+    },
   },
   getters: {
     all(state) {

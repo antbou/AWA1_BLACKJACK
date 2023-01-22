@@ -13,7 +13,6 @@
           @enter="tokenEnter"
           appear
           @appear="tokenEnter"
-          tag="div"
         >
           <PhPokerChipFill
             v-for="(tokenPlayed, index) in tokensPlayed"
@@ -22,7 +21,7 @@
             :value="tokenPlayed.value"
             @click="removeCredits($event)"
             :disabled="!canRemoveToken()"
-            class="absolute z-50"
+            class="absolute"
           />
         </TransitionGroup>
       </div>
