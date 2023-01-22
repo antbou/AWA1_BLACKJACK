@@ -1,7 +1,7 @@
 <template>
-  <div class="board">
-    <div class="board-bg">
-      <section id="rules" class="board-section">
+  <div class="flex flex-col text-gray-900 dark:text-white">
+    <div class="board-bg bg-scroll rules">
+      <section id="rules" class="flex justify-center p-4 md:p-8 w-full mt-32">
         <TheCard class="max-w-2xl">
           <div class="flex flex-col items-center mb-2">
             <p class="text-3xl md:text-5xl mb-4">♠️♥️ Game rules ♦️♣️</p>
@@ -92,8 +92,8 @@ import TheButton from "@/components/misc/TheButton.vue";
 
 <style>
 @media screen and (min-width: 366px) and (min-height: 1190px) {
-  .board {
-    @apply h-full !important;
+  .rules {
+    @apply h-screen !important;
   }
 }
 </style>

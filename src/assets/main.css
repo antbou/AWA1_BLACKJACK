@@ -20,9 +20,3 @@
 .board {
   @apply flex flex-col text-gray-900 dark:text-white;
 }
-
-/* body,
-html,
-#app {
-  @apply h-full;
-} */
